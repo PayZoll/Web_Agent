@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bot, Send, Loader2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import ReactMarkdown from "react-markdown"; // For rendering Markdown
+import ReactMarkdown from "react-markdown";
 
 const sampleQueries = [
   { title: "Chat with AI", query: "Tell me about the different features of PayZoll." },
   { title: "Post on Twitter", query: "Please post the following tweet: 'We are intoducing you to PayZoll, a new player in the Web3 Ecosystem'" },
   {
-    title: "Post on Reddit", query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
+    title: "Post on Reddit",
+    query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
   },
   { title: "Generate Post", query: "Generate a tweet about our new crypto payroll system that focuses on security features." },
   { title: "Employee Details", query: "Retrieve all employee details from the company_employees.csv file." },
@@ -24,14 +25,42 @@ interface Message {
   timestamp: Date;
 }
 
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.3 }
+};
+
+const slideIn = {
+  initial: { x: -300, opacity: 0 },
+  animate: { x: 0, opacity: 1 },
+  exit: { x: -300, opacity: 0 },
+  transition: { type: "spring", stiffness: 300, damping: 30 }
+};
+
+const textReveal = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay: 0.2 }
+};
+
+const cardHover = {
+  rest: { scale: 1, boxShadow: "0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 2px 4px -1px rgba(99, 102, 241, 0.06)" },
+  hover: {
+    scale: 1.02,
+    boxShadow: "0 20px 25px -5px rgba(99, 102, 241, 0.15), 0 10px 10px -5px rgba(99, 102, 241, 0.1)",
+    transition: { duration: 0.3, ease: "easeOut" }
+  }
+};
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // const apiUrl = "https://web-agent-server.onrender.com/api/";
-  const apiUrl = "http://127.0.0.1:5000/api";
+  const apiUrl = "https://web-agent-server.onrender.com/api";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,20 +72,15 @@ export default function Home() {
 
   const formatContent = (content: any): string => {
     if (typeof content === "string") {
-      // If it looks like Markdown (e.g., contains #, *, numbered lists), treat it as Markdown
-      if (content.match(/[#*]|\d+\./)) {
-        return content; // Will be rendered by ReactMarkdown
-      }
-      return content; // Plain text
+      if (content.match(/[#*]|\d+\./)) return content;
+      return content;
     }
 
     if (Array.isArray(content)) {
-      // Handle arrays (e.g., employee details, bulk transfer receipts)
       if (content.length === 0) return "No data available.";
 
       const firstItem = content[0];
       if ("name" in firstItem && "salary" in firstItem) {
-        // Employee details
         return content
           .map(
             (emp: any) =>
@@ -64,7 +88,6 @@ export default function Home() {
           )
           .join("\n");
       } else if ("tx_hash" in firstItem && "status" in firstItem) {
-        // Bulk transfer receipts
         return content
           .map((tx: any) => `- Transaction Hash: ${tx.tx_hash}\n  - Status: ${tx.status === 1 ? "Success" : "Failed"}`)
           .join("\n");
@@ -72,7 +95,6 @@ export default function Home() {
     }
 
     if (typeof content === "object" && content !== null) {
-      // Handle analytics or other JSON objects
       if ("total_employees" in content) {
         return (
           `- Total Employees: ${content.total_employees}\n` +
@@ -84,7 +106,7 @@ export default function Home() {
       }
     }
 
-    return JSON.stringify(content); // Fallback for unhandled cases
+    return JSON.stringify(content);
   };
 
   const extractRelevantContent = (data: any): string => {
@@ -136,64 +158,118 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex overflow-hidden">
+    <div className="min-h-screen bg-[#0A0F1C] text-white flex overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0A0F1C] via-[#1A1F2E] to-[#0D1321] z-0">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDYwIEwgNjAgMCIgc3Ryb2tlPSIjMjAyNDJFIiBzdHJva2Utd2lkdGg9IjAuNSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-10"></div>
+      </div>
+
       {/* Sidebar */}
-      <motion.aside
-        initial={{ x: -300 }}
-        animate={{ x: isSidebarOpen ? 0 : -300 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed left-0 top-0 h-full w-72 bg-gray-900/95 backdrop-blur-xl border-r border-cyan-500/20 z-20 p-6"
-      >
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold text-cyan-400">Sample Queries</h2>
-          <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-cyan-400">
-            <ChevronLeft size={24} />
-          </button>
-        </div>
-        <div className="space-y-4">
-          {sampleQueries.map((sample, index) => (
-            <motion.button
-              key={index}
-              whileHover={{ scale: 1.02, x: 5 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleSubmit(sample.query)}
-              className="w-full text-left p-3 rounded-lg bg-gradient-to-r from-cyan-900/20 to-blue-900/20 border border-cyan-500/30 hover:border-cyan-400 transition-all"
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.aside
+            {...slideIn}
+            className="fixed left-0 top-0 h-full w-80 bg-[#0D1321]/90 backdrop-blur-xl border-r border-indigo-500/20 z-20 p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"
+              >
+                Sample Queries
+              </motion.h2>
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: -90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-indigo-400 hover:text-purple-400 transition-colors"
+              >
+                <ChevronLeft size={24} />
+              </motion.button>
+            </div>
+            <motion.div
+              className="space-y-4"
+              variants={{
+                show: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              initial="hidden"
+              animate="show"
             >
-              <h3 className="text-sm font-semibold text-cyan-300">{sample.title}</h3>
-              <p className="text-xs text-gray-400 mt-1 line-clamp-2">{sample.query}</p>
-            </motion.button>
-          ))}
-        </div>
-      </motion.aside>
+              {sampleQueries.map((sample, index) => (
+                <motion.button
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    show: { opacity: 1, x: 0 }
+                  }}
+                  whileHover={{
+                    scale: 1.02,
+                    x: 5,
+                    backgroundColor: "rgba(99, 102, 241, 0.1)",
+                    borderColor: "rgba(99, 102, 241, 0.5)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleSubmit(sample.query)}
+                  className="w-full text-left p-4 rounded-xl bg-[#151A2A]/50 border border-indigo-500/20 hover:border-indigo-400/50 transition-all duration-300 group"
+                >
+                  <h3 className="text-sm font-semibold text-indigo-300 group-hover:text-indigo-200">{sample.title}</h3>
+                  <p className="text-xs text-gray-400 mt-1 line-clamp-2 group-hover:text-gray-300">{sample.query}</p>
+                </motion.button>
+              ))}
+            </motion.div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
       {/* Sidebar Toggle */}
-      {!isSidebarOpen && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-20 bg-cyan-500/20 p-2 rounded-full hover:bg-cyan-500/30"
-          onClick={() => setIsSidebarOpen(true)}
-        >
-          <ChevronRight size={24} className="text-cyan-400" />
-        </motion.button>
-      )}
+      <AnimatePresence>
+        {!isSidebarOpen && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="fixed left-4 top-1/2 -translate-y-1/2 z-20 bg-indigo-500/20 p-3 rounded-full hover:bg-indigo-500/30 transition-colors"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <ChevronRight size={24} className="text-indigo-400" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col ml-[300px]">
+      <div className={`flex-1 flex flex-col ${isSidebarOpen ? 'ml-80' : 'ml-0'} transition-all duration-300`}>
         {/* Header */}
         <motion.header
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="p-6 border-b border-cyan-500/20 bg-gray-900/50 backdrop-blur-xl fixed w-full top-0 z-10"
+          className="p-6 border-b border-indigo-500/20 bg-[#0D1321]/50 backdrop-blur-xl fixed w-full top-0 z-10"
         >
           <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bot className="w-10 h-10 text-cyan-400" />
-              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 text-transparent bg-clip-text">
+            <motion.div
+              className="flex items-center gap-3"
+              whileHover={{ scale: 1.02 }}
+            >
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Sparkles className="w-10 h-10 text-indigo-400" />
+              </motion.div>
+              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text">
                 PayZoll AI
               </h1>
-            </div>
+            </motion.div>
           </div>
         </motion.header>
 
@@ -203,25 +279,37 @@ export default function Home() {
             {messages.map((message, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                {...fadeInUp}
                 className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} mb-6`}
               >
                 <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className={`max-w-3xl rounded-xl p-5 ${message.type === "user"
-                    ? "bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border border-cyan-500/50"
-                    : "bg-gradient-to-r from-gray-800/70 to-gray-900/70 border border-gray-700/50"
-                    } shadow-lg`}
+                  initial="rest"
+                  whileHover="hover"
+                  animate="rest"
+                  variants={cardHover}
+                  className={`max-w-3xl rounded-2xl p-6 ${message.type === "user"
+                    ? "bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 border border-indigo-500/30 hover:border-indigo-400/50"
+                    : "bg-gradient-to-r from-[#151A2A]/70 via-[#1A1F2E]/70 to-[#1F2437]/70 border border-gray-700/30 hover:border-gray-600/50"
+                    } shadow-xl backdrop-blur-sm relative overflow-hidden group`}
                 >
-                  <div className="text-sm text-gray-200 prose prose-invert max-w-none">
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
-                  </div>
-                  <div className={`text-xs mt-3 ${message.type === "user" ? "text-cyan-300" : "text-gray-400"}`}>
-                    {message.timestamp.toLocaleTimeString()}
-                  </div>
+                  {/* Animated gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+
+                  {/* Message content with staggered animation */}
+                  <motion.div
+                    variants={textReveal}
+                    className="relative z-10"
+                  >
+                    <div className="text-sm text-gray-200 prose prose-invert max-w-none prose-headings:text-indigo-400 prose-a:text-purple-400 prose-strong:text-pink-400 prose-code:text-cyan-400">
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
+                    <div className={`text-xs mt-3 ${message.type === "user"
+                      ? "text-indigo-300/80"
+                      : "text-gray-400/80"
+                      }`}>
+                      {message.timestamp.toLocaleTimeString()}
+                    </div>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             ))}
@@ -233,8 +321,7 @@ export default function Home() {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 left-[300px] right-0 bg-gray-900/50 backdrop-blur-xl border-t border-cyan-500/20 p-6"
+          className="fixed bottom-0 right-0 left-0 bg-[#0D1321]/50 backdrop-blur-xl border-t border-indigo-500/20 p-6 ml-[320px]"
         >
           <form
             onSubmit={(e) => {
@@ -244,21 +331,25 @@ export default function Home() {
             className="max-w-5xl mx-auto flex gap-4"
           >
             <motion.input
-              whileFocus={{ scale: 1.02, borderColor: "#22d3ee" }}
+              whileFocus={{ scale: 1.01 }}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 bg-gray-800/50 border border-cyan-500/30 rounded-xl px-5 py-4 focus:outline-none focus:border-cyan-400 transition-all text-gray-200"
+              className="flex-1 bg-[#151A2A]/50 border border-indigo-500/30 rounded-xl px-6 py-4 focus:outline-none focus:border-indigo-400 transition-all text-gray-200 placeholder-gray-400"
             />
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-4 rounded-xl flex items-center gap-2 transition-all disabled:opacity-50 disabled:hover:from-cyan-500 disabled:hover:to-blue-500 shadow-lg"
+              className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-xl flex items-center gap-3 transition-all disabled:opacity-50 disabled:hover:from-indigo-500 disabled:hover:to-purple-500 shadow-lg shadow-indigo-500/20"
             >
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Send className="w-5 h-5" />
+              )}
               Send
             </motion.button>
           </form>
