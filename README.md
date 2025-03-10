@@ -178,7 +178,7 @@ sequenceDiagram
         alt Chat Request
             P->>+O: "Chat with AI"
             O-->>-P: Response Text
-            P-->>-A: {"status": "success", "data": "..."}
+            P-->>A: {"status": "success", "data": "..."}
             
         else Social Post
             P->>+O: "Generate Post"
@@ -190,7 +190,7 @@ sequenceDiagram
                 P->>+R: Post to Reddit
                 R-->>-P: Success
             end
-            P-->>-A: {"status": "success", "data": "Posted"}
+            P-->>A: {"status": "success", "data": "Posted"}
             
         else Payroll Transfer
             P->>+O: "Process Payroll"
@@ -199,18 +199,19 @@ sequenceDiagram
             S-->>-P: Transaction Hash
             P->>+D: Log Transaction
             D-->>-P: Saved
-            P-->>-A: {"status": "success", "data": "Transfers complete"}
+            P-->>A: {"status": "success", "data": "Transfers complete"}
             
         else Analytics
             P->>+D: Fetch Employee Data
             D-->>-P: Data Records
             P->>+O: "Analyze Trends"
             O-->>-P: Insights Report
-            P-->>-A: {"status": "success", "data": {...}}
+            P-->>A: {"status": "success", "data": {...}}
         end
         
-        A-->>-C: Response
+        A-->>-P: End Processing
     end
+    A-->>-C: Response
 ```
 
 This flow showcases the API’s ability to handle diverse tasks—chat, social posts, payroll, and analytics—with a unified entry point.
