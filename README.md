@@ -7,9 +7,11 @@ PayZoll is a revolutionary payroll platform that integrates Web3 technology with
 First, clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/[your-repo]/payzoll-api.git
-cd payzoll-api
+git clone https://github.com/PayZoll/Web-Agent.git
+cd server
 pip install -r requirements.txt
+cd ../client
+npm i
 ```
 
 Create a `.env` file with required environment variables:
@@ -179,34 +181,31 @@ Send requests to the API endpoint using JSON format:
 ## Available Functions
 
 1. **Chat with AI**  - Function: `chat_with_ai`
-  - Purpose: Engage in conversation with the AI assistant
-  - Example Message: "What are the benefits of blockchain payroll?"
 
+- Purpose: Engage in conversation with the AI assistant
+- Example Message: "What are the benefits of blockchain payroll?"
 
 2. **Social Media Posts**  - Function: `generate_post`
-  - Purpose: Generate social media content for Twitter or Reddit
-  - Example Message: "Generate a Twitter post about our product launch"
 
+- Purpose: Generate social media content for Twitter or Reddit
+- Example Message: "Generate a Twitter post about our product launch"
 
 3. **Payroll Processing**  - Function: `silent_bulk_transfer`
-  - Purpose: Execute bulk ETH transfers to employees
-  - Parameters Required:
-    - RPC URL for Ethereum node
-    - JSON string containing employee data and salaries
 
-
-
+- Purpose: Execute bulk Sonic transfers to employees
+- Parameters Required:
+  - RPC URL for Sonic node
+  - JSON string containing employee data and salaries
 
 4. **Analytics**  - Function: `employee_analytics`
-  - Purpose: Generate insights from employee data
-  - Returns: Total employees, average salary, work hours analysis
 
+- Purpose: Generate insights from employee data
+- Returns: Total employees, average salary, work hours analysis
 
 5. **Transaction Insights**  - Function: `transaction_insights`
-  - Purpose: Analyze transaction logs using OpenAI
-  - Generates detailed reports on payroll transactions
 
-
+- Purpose: Analyze transaction logs using OpenAI
+- Generates detailed reports on payroll transactions
 
 ## Error Handling
 
@@ -223,20 +222,19 @@ All API responses follow a standardized format:
 ## Security Considerations
 
 1. **Environment Variables**  - All sensitive credentials are stored in `.env` files
-  - Never commit `.env` files to version control
-  - Use secure methods to manage environment variables in production
 
+- Never commit `.env` files to version control
+- Use secure methods to manage environment variables in production
 
 2. **API Security**  - All requests require proper JSON formatting
-  - Input validation occurs at multiple levels
-  - Error responses are sanitized to prevent information leakage
 
+- Input validation occurs at multiple levels
+- Error responses are sanitized to prevent information leakage
 
 3. **Web3 Security**  - Private keys are stored securely in environment variables
-  - Transaction signing occurs locally
-  - Gas parameters are optimized for security and efficiency
 
-
+- Transaction signing occurs locally
+- Gas parameters are optimized for security and efficiency
 
 ## Development Notes
 
