@@ -1,0 +1,11 @@
+id,name,email,department,position,salary,work_hours,accountId
+1,John Doe,john.doe@payzoll.com,Engineering,Senior Developer,0.8,40,0x1234567890123456789012345678901234567890
+2,Jane Smith,jane.smith@payzoll.com,Marketing,Marketing Director,0.95,38,0x2345678901234567890123456789012345678901
+3,Bob Johnson,bob.johnson@payzoll.com,Engineering,Frontend Developer,0.65,40,0x3456789012345678901234567890123456789012
+4,Alice Williams,alice.williams@payzoll.com,Finance,Financial Analyst,0.75,37,0x4567890123456789012345678901234567890123
+5,Charlie Brown,charlie.brown@payzoll.com,HR,HR Manager,0.85,39,0x5678901234567890123456789012345678901234
+6,Eva Garcia,eva.garcia@payzoll.com,Engineering,Backend Developer,0.7,40,0x6789012345678901234567890123456789012345
+7,David Lee,david.lee@payzoll.com,Sales,Sales Representative,0.6,35,0x7890123456789012345678901234567890123456
+8,Grace Kim,grace.kim@payzoll.com,Engineering,QA Engineer,0.55,40,0x8901234567890123456789012345678901234567
+9,Michael Chen,michael.chen@payzoll.com,Finance,Accountant,0.7,38,0x9012345678901234567890123456789012345678
+10,Sophie Taylor,sophie.taylor@payzoll.com,Marketing,Content Creator,0.4,36,0x0123456789012345678901234567890123456789

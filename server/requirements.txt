@@ -1,0 +1,7 @@
+flask
+openai
+tweepy
+praw
+web3
+python-dotenv
+flask-cors
