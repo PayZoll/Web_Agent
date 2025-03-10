@@ -14,7 +14,7 @@ const sampleQueries = [
   { title: "Generate Post", query: "Generate a tweet about our new crypto payroll system that focuses on security features." },
   { title: "Employee Details", query: "Retrieve all employee details from the company_employees.csv file." },
   { title: "Analytics", query: "Show me analytics for our employee data including average salary and work hours." },
-  { title: "Bulk Transfer", query: "Execute a bulk transfer of ETH to these employees: [{\"accountId\": \"0xF947782C0CB4d3afa57912DA235894563950E2F4\", \"salary\": 0.2}] using the Sonic RPC URL: https://rpc.blaze.soniclabs.com/" },
+  { title: "Bulk Transfer", query: "Execute a bulk transfer of ETH to these employees: [{\"accountId\": \"0xF947782C0CB4d3afa57912DA235894563950E2F4\", \"salary\": 0.2},{\"accountId\": \"0x8AA334072b03AB3F4cE4035A16a1Ee5Bde2521f1\", \"salary\": 0.2},{\"accountId\": \"0xe2e1862B5cA1743DF3F616DB927070AEC4c5B4fC\", \"salary\": 0.2}] using the Sonic RPC URL: https://rpc.blaze.soniclabs.com/" },
   { title: "Transaction Insights", query: "Generate insights from our transaction log, focusing on trends in payment amounts." },
 ];
 
@@ -30,7 +30,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [apiUrl, setApiUrl] = useState("http://localhost:5000/api");
+  const [apiUrl, setApiUrl] = useState("https://web-agent-server.onrender.com/api");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
