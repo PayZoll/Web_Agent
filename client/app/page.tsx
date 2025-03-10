@@ -30,7 +30,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [apiUrl, setApiUrl] = useState("https://web-agent-server.onrender.com/api");
+  const apiUrl = "https://web-agent-server.onrender.com/api";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
