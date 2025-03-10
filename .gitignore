@@ -1,2 +1,4 @@
 .env
 server/env
+server/discord_bot.py
+server/reddit_bot.py

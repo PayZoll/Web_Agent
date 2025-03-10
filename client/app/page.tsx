@@ -18,6 +18,20 @@ const sampleQueries = [
     title: "Post on Reddit",
     query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
   },
+  { title: "Current Time", query: "What is the current server time?" },
+  { title: "Motivational Quote", query: "Show me a random motivational quote." },
+  { title: "Calculate Savings", query: "Calculate how much our company would save by switching to PayZoll if our traditional payroll costs $50,000 per month for 120 employees." },
+  { title: "PayZoll Features", query: "What are the main features of the PayZoll platform?" },
+  { title: "PayZoll FAQ", query: "What are some frequently asked questions about PayZoll?" },
+  { title: "Web3 Payroll Guide", query: "Provide me with a guide to understanding Web3 payroll concepts." },
+  { title: "Payroll Comparison", query: "Compare traditional payroll systems with Web3 payroll." },
+  { title: "Case Studies", query: "Show me case studies of companies that have successfully implemented PayZoll." },
+  { title: "Implementation Guide", query: "How do I implement PayZoll in my organization? I need a step-by-step guide." },
+  { title: "Crypto Explanation", query: "Can you explain what stablecoins are and how they're used in PayZoll?" },
+  { title: "Payroll Schedule", query: "Generate a biweekly payroll schedule starting from 2025-04-01 for our 45 employees." },
+  { title: "Volatility Handling", query: "How does PayZoll handle cryptocurrency volatility for regular payroll?" },
+  { title: "Multi-Chain Support", query: "Which blockchain networks does PayZoll currently support?" },
+  { title: "Off-Ramping Options", query: "What options are available for employees who want to convert their crypto payments to fiat currency?" },
 ];
 
 interface Message {
@@ -61,8 +75,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const apiUrl = "https://web-agent-server.onrender.com/api";
-  // const apiUrl = "http://127.0.0.1:5000/api";
+  // const apiUrl = "https://web-agent-server.onrender.com/api";
+  const apiUrl = "http://127.0.0.1:5000/api";
 
 
   const scrollToBottom = () => {
@@ -75,7 +89,6 @@ export default function Home() {
 
   const formatContent = (content: any): string => {
     if (typeof content === "string") {
-      if (content.match(/[#*]|\d+\./)) return content;
       return content;
     }
 
@@ -83,45 +96,216 @@ export default function Home() {
       if (content.length === 0) return "No data available.";
 
       const firstItem = content[0];
+
+      // Employee data formatting
       if ("name" in firstItem && "salary" in firstItem) {
         return content
           .map(
             (emp: any) =>
-              `- **${emp.name}** (${emp.position}, ${emp.department})\n  - Account: ${emp.accountId}\n  - Salary: ${emp.salary} ETH\n  - Work Hours: ${emp.work_hours}`
+              `### ${emp.name}\n**Position:** ${emp.position}\n**Department:** ${emp.department}\n**Account:** ${emp.accountId}\n**Salary:** ${emp.salary} ETH\n**Hours:** ${emp.work_hours}`
           )
-          .join("\n");
-      } else if ("tx_hash" in firstItem && "status" in firstItem) {
-        return content
-          .map((tx: any) => `- Transaction Hash: ${tx.tx_hash}\n  - Status: ${tx.status === 1 ? "Success" : "Failed"}`)
-          .join("\n");
+          .join("\n\n---\n\n");
       }
+
+      // Transaction data formatting
+      else if ("tx_hash" in firstItem && "status" in firstItem) {
+        return content
+          .map((tx: any) =>
+            `### Transaction ${tx.tx_hash.substring(0, 8)}...${tx.tx_hash.substring(tx.tx_hash.length - 6)}\n` +
+            `**Status:** ${tx.status === 1 ? "✅ Success" : "❌ Failed"}\n` +
+            `**Recipient:** ${tx.recipient || "N/A"}\n` +
+            `**Amount:** ${tx.amount || "N/A"} ETH\n` +
+            `**Time:** ${tx.timestamp || "N/A"}`
+          )
+          .join("\n\n---\n\n");
+      }
+
+      // Features list formatting
+      else if ("name" in firstItem && "description" in firstItem) {
+        return content
+          .map((item: any) => `### ${item.name}\n${item.description}`)
+          .join("\n\n");
+      }
+
+      // FAQ formatting
+      else if ("question" in firstItem && "answer" in firstItem) {
+        return content
+          .map((item: any) => `### ${item.question}\n${item.answer}`)
+          .join("\n\n---\n\n");
+      }
+
+      // Case studies formatting
+      else if ("company" in firstItem && "challenge" in firstItem) {
+        return content
+          .map((study: any) =>
+            `## ${study.company}\n\n` +
+            `**Industry:** ${study.industry}\n` +
+            `**Employees:** ${study.employees}\n` +
+            `**Countries:** ${study.countries}\n\n` +
+            `### Challenge\n${study.challenge}\n\n` +
+            `### Solution\n${study.solution}\n\n` +
+            `### Results\n${study.results.map((r: string) => `- ${r}`).join('\n')}`
+          )
+          .join("\n\n---\n\n");
+      }
+
+      // Default array formatting
+      return content.map((item: any) => typeof item === 'object' ? `- ${JSON.stringify(item)}` : `- ${item}`).join('\n');
     }
 
     if (typeof content === "object" && content !== null) {
+      // Employee analytics
       if ("total_employees" in content) {
         return (
-          `- Total Employees: ${content.total_employees}\n` +
-          `- Total Salary: ${content.total_salary} ETH\n` +
-          `- Average Salary: ${content.average_salary.toFixed(2)} ETH\n` +
-          `- Total Work Hours: ${content.total_work_hours}\n` +
-          `- Average Work Hours: ${content.average_work_hours.toFixed(2)}`
+          `## Company Analytics\n\n` +
+          `**Total Employees:** ${content.total_employees}\n` +
+          `**Total Salary:** ${content.total_salary.toFixed(2)} ETH\n` +
+          `**Average Salary:** ${content.average_salary.toFixed(2)} ETH\n` +
+          `**Total Work Hours:** ${content.total_work_hours.toFixed(2)}\n` +
+          `**Average Work Hours:** ${content.average_work_hours.toFixed(2)}`
         );
+      }
+
+      // Payroll savings calculation
+      else if ("traditional_cost" in content && "payzoll_cost" in content) {
+        return (
+          `## PayZoll Savings Analysis\n\n` +
+          `**Traditional Payroll Cost:** $${content.traditional_cost.toLocaleString()}\n` +
+          `**PayZoll Cost:** $${content.payzoll_cost.toLocaleString()}\n` +
+          `**Monthly Maintenance:** $${content.monthly_fee.toLocaleString()}\n` +
+          `**Total Savings:** $${content.total_savings.toLocaleString()}\n` +
+          `**Savings Percentage:** ${content.savings_percentage.toFixed(2)}%`
+        );
+      }
+
+      // Payroll schedule
+      else if ("frequency" in content && "schedule" in content) {
+        let result = `## ${content.frequency.charAt(0).toUpperCase() + content.frequency.slice(1)} Payroll Schedule\n\n`;
+
+        if (Array.isArray(content.schedule)) {
+          result += content.schedule.map((period: any) =>
+            `### Pay Period ${period.pay_period}\n` +
+            `**Process Date:** ${period.process_date}\n` +
+            `**Payment Date:** ${period.payment_date}\n` +
+            `**Employees:** ${period.employees}\n` +
+            `**Est. Gas Cost:** ${period.estimated_gas_cost} ETH\n` +
+            `**Est. Process Time:** ${period.estimated_process_time}`
+          ).join("\n\n");
+        }
+
+        return result;
+      }
+
+      // Web3 payroll guide
+      else if ("title" in content && "key_concepts" in content) {
+        let result = `# ${content.title}\n\n${content.introduction}\n\n## Key Concepts\n\n`;
+
+        if (Array.isArray(content.key_concepts)) {
+          result += content.key_concepts.map((concept: any) =>
+            `### ${concept.name}\n${concept.description}`
+          ).join("\n\n");
+        }
+
+        if (Array.isArray(content.benefits)) {
+          result += "\n\n## Benefits\n\n";
+          result += content.benefits.map((benefit: string) => `- ${benefit}`).join("\n");
+        }
+
+        return result;
+      }
+
+      // Implementation guide
+      else if ("steps" in content) {
+        let result = `# ${content.title || "Implementation Guide"}\n\n`;
+
+        if (Array.isArray(content.steps)) {
+          result += content.steps.map((step: any) =>
+            `### Step ${step.step}: ${step.name}\n` +
+            `${step.description}\n` +
+            `**Time Estimate:** ${step.estimated_time}`
+          ).join("\n\n");
+
+          if (content.total_time) {
+            result += `\n\n**Total Implementation Time:** ${content.total_time}`;
+          }
+        }
+
+        return result;
+      }
+
+      // Payroll comparison
+      else if ("categories" in content) {
+        let result = `# Traditional vs Web3 Payroll\n\n`;
+
+        if (Array.isArray(content.categories)) {
+          result += content.categories.map((cat: any) =>
+            `### ${cat.category}\n` +
+            `**Traditional:** ${cat.traditional}\n` +
+            `**Web3:** ${cat.web3}`
+          ).join("\n\n");
+        }
+
+        return result;
+      }
+
+      // Crypto knowledge query
+      else if ("query" in content && "explanation" in content) {
+        return `## ${content.query}\n\n${content.explanation}`;
+      }
+
+      // Current time
+      else if ("current_time" in content) {
+        return `The current server time is: **${content.current_time}**`;
+      }
+
+      // Quote
+      else if ("quote" in content) {
+        return `> ${content.quote}`;
       }
     }
 
-    return JSON.stringify(content);
+    // Final fallback - try to make any remaining objects readable
+    if (typeof content === "object" && content !== null) {
+      const formattedEntries = Object.entries(content).map(([key, value]) => {
+        const formattedKey = key
+          .replace(/_/g, ' ')
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+
+        if (Array.isArray(value)) {
+          return `**${formattedKey}**:\n${value.map((item: any) => `- ${item}`).join('\n')}`;
+        } else if (typeof value === 'object' && value !== null) {
+          return `**${formattedKey}**:\n${JSON.stringify(value, null, 2)}`;
+        } else {
+          return `**${formattedKey}**: ${value}`;
+        }
+      });
+
+      return formattedEntries.join('\n\n');
+    }
+
+    return String(content);
   };
 
   const extractRelevantContent = (data: any): string => {
+    if (!data) return "No response received";
+
     if (data.function_result) {
       const result = data.function_result;
       if (result.status === "error") {
-        return result.message;
+        return `⚠️ Error: ${result.message}`;
       }
-      const relevantData = result.response || result.data || result.post || result.message || "Action completed successfully";
+      const relevantData = result.response || result.data || result.post || result.message || result.quote || "Action completed successfully";
       return formatContent(relevantData);
     }
-    return formatContent(data.ai_message || "No response available");
+
+    // If no function result, use the AI message
+    if (data.ai_message) {
+      return data.ai_message;
+    }
+
+    return "No relevant content found in the response";
   };
 
   const handleSubmit = async (message: string) => {
@@ -172,27 +356,33 @@ export default function Home() {
         {isSidebarOpen && (
           <motion.aside
             {...slideIn}
-            className="fixed left-0 top-0 h-full w-80 bg-[#0D1321]/90 backdrop-blur-xl border-r border-indigo-500/20 z-20 p-6"
+            className="fixed left-0 top-0 h-full w-80 bg-[#0D1321]/90 backdrop-blur-xl border-r border-indigo-500/20 z-20 flex flex-col"
           >
-            <div className="flex items-center justify-between mb-8">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"
-              >
-                Sample Queries
-              </motion.h2>
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: -90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsSidebarOpen(false)}
-                className="text-indigo-400 hover:text-purple-400 transition-colors"
-              >
-                <ChevronLeft size={24} />
-              </motion.button>
+            <div className="p-6 border-b border-indigo-500/20">
+              <div className="flex items-center justify-between">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"
+                >
+                  Sample Queries
+                </motion.h2>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: -90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="text-indigo-400 hover:text-purple-400 transition-colors"
+                >
+                  <ChevronLeft size={24} />
+                </motion.button>
+              </div>
             </div>
             <motion.div
-              className="space-y-4"
+              className="overflow-y-auto flex-1 p-6 pt-4"
+              style={{
+                scrollbarWidth: 'none',  /* Firefox */
+                msOverflowStyle: 'none',  /* IE and Edge */
+              }}
               variants={{
                 show: {
                   transition: {
@@ -203,27 +393,34 @@ export default function Home() {
               initial="hidden"
               animate="show"
             >
-              {sampleQueries.map((sample, index) => (
-                <motion.button
-                  key={index}
-                  variants={{
-                    hidden: { opacity: 0, x: -20 },
-                    show: { opacity: 1, x: 0 }
-                  }}
-                  whileHover={{
-                    scale: 1.02,
-                    x: 5,
-                    backgroundColor: "rgba(99, 102, 241, 0.1)",
-                    borderColor: "rgba(99, 102, 241, 0.5)"
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSubmit(sample.query)}
-                  className="w-full text-left p-4 rounded-xl bg-[#151A2A]/50 border border-indigo-500/20 hover:border-indigo-400/50 transition-all duration-300 group"
-                >
-                  <h3 className="text-sm font-semibold text-indigo-300 group-hover:text-indigo-200">{sample.title}</h3>
-                  <p className="text-xs text-gray-400 mt-1 line-clamp-2 group-hover:text-gray-300">{sample.query}</p>
-                </motion.button>
-              ))}
+              <div className="space-y-4">
+                {sampleQueries.map((sample, index) => (
+                  <motion.button
+                    key={index}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      show: { opacity: 1, x: 0 }
+                    }}
+                    whileHover={{
+                      scale: 1.02,
+                      x: 5,
+                      backgroundColor: "rgba(99, 102, 241, 0.1)",
+                      borderColor: "rgba(99, 102, 241, 0.5)"
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleSubmit(sample.query)}
+                    className="w-full text-left p-4 rounded-xl bg-[#151A2A]/50 border border-indigo-500/20 hover:border-indigo-400/50 transition-all duration-300 group"
+                  >
+                    <h3 className="text-sm font-semibold text-indigo-300 group-hover:text-indigo-200">{sample.title}</h3>
+                    <p className="text-xs text-gray-400 mt-1 line-clamp-2 group-hover:text-gray-300">{sample.query}</p>
+                  </motion.button>
+                ))}
+              </div>
+              <style jsx global>{`
+        div::-webkit-scrollbar {
+          display: none;
+        }
+          `}</style>
             </motion.div>
           </motion.aside>
         )}
