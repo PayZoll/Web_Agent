@@ -1,116 +1,38 @@
-# PayZoll Web-Agent: Next-Gen Payroll Automation 🚀
+# PayZoll API Documentation
 
-Welcome to **PayZoll Web-Agent**, a state-of-the-art API that redefines payroll management by blending Web3 blockchain technology, AI-driven automation, and a sleek, user-friendly interface. Built with the latest tech stacks and powered by advanced Large Language Models (LLMs), PayZoll delivers seamless transactions, insightful data analytics, and an unparalleled user experience—making crypto payroll accessible, efficient, and future-ready.
+PayZoll is a revolutionary payroll platform that integrates Web3 technology with AI-driven automation. This Flask-based API simplifies crypto payroll management by handling multi-chain transactions, stable token swaps, and efficient fiat off-ramps while maintaining a user-friendly interface similar to traditional payroll systems.
 
-**Live Client**: [http://web-agent-client.onrender/](http://web-agent-client.onrender/)  
-**Live API**: [http://web-agent-server.onrender/api](http://web-agent-server.onrender/api)  
-**Repository**: [PayZoll/Web-Agent](https://github.com/PayZoll/Web-Agent)  
-**Star us**: Give us a ⭐ to support the future of payroll!
+## Installation
 
----
+First, clone the repository and install dependencies:
 
-## 🌟 What Sets PayZoll Web-Agent Apart
+```bash
+git clone https://github.com/PayZoll/Web-Agent.git
+cd server
+pip install -r requirements.txt
+cd ../client
+npm i
+```
 
-PayZoll Web-Agent isn’t just an API—it’s a game-changer for payroll systems. Here’s why:
+Create a `.env` file with required environment variables:
 
-- **Seamless Transactions**: Execute global payroll with Sonic-speed blockchain transfers.
-- **Advanced Analytics**: Unlock actionable insights from employee and transaction data with AI.
-- **Stunning UI**: A modern, intuitive interface that abstracts Web3 complexity.
-- **Latest Tech**: Built with Flask, Node.js, Sonic blockchain, and cutting-edge LLMs.
-- **Scalable Design**: Handles 10 employees or 10,000 with ease.
+```bash
+OPENAI_API_KEY=your_openai_key
+BEARER_KEY=your_bearer_token
+CONSUMER_KEY=your_consumer_key
+CONSUMER_SECRET=your_consumer_secret
+ACCESS_KEY=your_access_key
+ACCESS_SECRET=your_access_secret
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+REDDIT_USERNAME=your_reddit_username
+REDDIT_PASSWORD=your_reddit_password
+PRIVATE_KEY=your_ethereum_private_key
+```
 
-> "PayZoll Web-Agent fuses blockchain’s power with AI’s intelligence and a UI that feels like magic—payroll has never been this effortless."  
-> — Team PayZoll
+## System Architecture
 
----
-
-## 🎨 Core Features
-
-| Feature                | Description                                                                 |
-|------------------------|-----------------------------------------------------------------------------|
-| **Instant Payroll**       | Multi-chain Sonic transfers for global payments in seconds.              |
-| **AI-Powered Insights**   | Deep analytics on salaries, hours, and transactions via LLMs.            |
-| **Modern UI/UX**          | A client interface that’s as beautiful as it is functional.              |
-| **Stablecoin Swaps**      | Auto-converts payments to USDT or other stablecoins for consistency.     |
-| **Social Integration**    | Generate and post payroll updates to Twitter/Reddit effortlessly.        |
-
----
-
-## 🛠️ Installation & Setup
-
-Get PayZoll Web-Agent running locally in minutes.
-
-### Prerequisites
-
-- **Python 3.9+**: For the Flask-based server.
-- **Node.js 18+**: For the client frontend.
-- **pip**: Python package manager.
-- **npm**: Node package manager.
-- **Sonic Node RPC**: For blockchain interactions.
-
-### Step-by-Step Installation
-
-1. **Clone the Repository**  
-
-   ```bash
-   git clone https://github.com/PayZoll/Web-Agent.git
-   cd Web-Agent
-   ```
-
-2. **Set Up the Server**  
-
-   ```bash
-   cd server
-   pip install -r requirements.txt
-   ```
-
-3. **Set Up the Client**  
-
-   ```bash
-   cd ../client
-   npm i
-   ```
-
-4. **Configure Environment Variables**  
-   Create a `.env` file in the `server/` directory:
-
-   ```bash
-   OPENAI_API_KEY=your_openai_key
-   BEARER_KEY=your_bearer_token
-   CONSUMER_KEY=your_consumer_key
-   CONSUMER_SECRET=your_consumer_secret
-   ACCESS_KEY=your_access_key
-   ACCESS_SECRET=your_access_secret
-   REDDIT_CLIENT_ID=your_reddit_client_id
-   REDDIT_CLIENT_SECRET=your_reddit_client_secret
-   REDDIT_USERNAME=your_reddit_username
-   REDDIT_PASSWORD=your_reddit_password
-   PRIVATE_KEY=your_ethereum_private_key
-   SONIC_RPC_URL=your_sonic_node_url
-   ```
-
-5. **Run the Server**  
-
-   ```bash
-   cd server
-   python app.py
-   ```
-
-6. **Run the Client**  
-
-   ```bash
-   cd ../client
-   npm start
-   ```
-
-   - Server runs at `http://localhost:5000/api`
-   - Client runs at `http://localhost:3000`
-
----
-
-## 🏗️ System Architecture
-
-PayZoll Web-Agent is a unified platform integrating blockchain, AI, and social services. Here’s the architecture:
+The PayZoll API operates as a unified platform integrating multiple services through a single entry point. Here's the high-level architecture:
 
 ```mermaid
 flowchart TD
@@ -214,148 +136,105 @@ sequenceDiagram
             D-->>-P: Saved
             P-->>A: {"status": "success", "data": "Transfers complete"}
             
-        else Analytics
-            P->>+D: Fetch Employee Data
-            D-->>-P: Data Records
-            P->>+O: "Analyze Trends"
-            O-->>-P: Insights Report
-            P-->>A: {"status": "success", "data": {...}}
+        else Analytics Request
+            GPT-->>-Processor: Function: employee_analytics
+            Processor->>+CSV: Read employee data
+            CSV-->>-Processor: Employee records
+            Processor->>+GPT: Generate insights
+            GPT-->>-Processor: Analytics report
+            Processor-->>-API: {"status": "success", ...}
+            
         end
         
-        P-->>-A: End Processing
+        Client-->>-API: Response
     end
-    A-->>-C: Response
 ```
 
-This flow showcases the API’s ability to handle diverse tasks—chat, social posts, payroll, and analytics—with a unified entry point.
+The sequence diagram above illustrates the complete lifecycle of a request through the PayZoll API, showing how different types of requests (chat, social media posts, payroll processing, and analytics) are handled through distinct paths while maintaining a unified entry point. Each request flows through the Message Processor, which determines the appropriate function to execute based on the message content.
 
----
+## Usage Examples
 
-## 🚀 Usage Examples
+Send requests to the API endpoint using JSON format:
 
-Interact with the API via JSON requests:
+```json
+{
+    "message": "Generate a Twitter post about our new product launch"
+}
 
-1. **Chat with AI**  
+{
+    "message": "Process bulk transfer for employees"
+}
 
-   ```json
-   {
-       "message": "Explain blockchain payroll benefits"
-   }
-   ```
+{
+    "message": "Analyze employee salary trends"
+}
+```
 
-   *Response*: AI-generated explanation.
+## Available Functions
 
-2. **Social Media Post**  
+1. **Chat with AI**  - Function: `chat_with_ai`
 
-   ```json
-   {
-       "message": "Announce our payroll upgrade on Twitter"
-   }
-   ```
+- Purpose: Engage in conversation with the AI assistant
+- Example Message: "What are the benefits of blockchain payroll?"
 
-   *Response*: Tweet posted confirmation.
+2. **Social Media Posts**  - Function: `generate_post`
 
-3. **Payroll Processing**  
+- Purpose: Generate social media content for Twitter or Reddit
+- Example Message: "Generate a Twitter post about our product launch"
 
-   ```json
-   {
-       "message": "Process bulk payroll for employees"
-   }
-   ```
+3. **Payroll Processing**  - Function: `silent_bulk_transfer`
 
-   *Response*: Transaction details.
+- Purpose: Execute bulk Sonic transfers to employees
+- Parameters Required:
+  - RPC URL for Sonic node
+  - JSON string containing employee data and salaries
 
-4. **Analytics**  
+4. **Analytics**  - Function: `employee_analytics`
 
-   ```json
-   {
-       "message": "Show salary trends for Q1 2025"
-   }
-   ```
+- Purpose: Generate insights from employee data
+- Returns: Total employees, average salary, work hours analysis
 
-   *Response*: Detailed report.
+5. **Transaction Insights**  - Function: `transaction_insights`
 
----
+- Purpose: Analyze transaction logs using OpenAI
+- Generates detailed reports on payroll transactions
 
-## 🧰 Available Functions
+## Error Handling
 
-1. **`chat_with_ai`**  
-   - **Purpose**: Conversational AI responses.  
-   - **Input**: Any query.  
-   - **Output**: Text response.
+All API responses follow a standardized format:
 
-2. **`generate_post`**  
-   - **Purpose**: Create social media content.  
-   - **Input**: Platform + topic.  
-   - **Output**: Posted content ID.
+```json
+{
+    "status": "success/error",
+    "message": "Operation result or error description",
+    "data": {}  // Optional data payload
+}
+```
 
-3. **`silent_bulk_transfer`**  
-   - **Purpose**: Execute payroll via Sonic blockchain.  
-   - **Input**: Employee JSON + RPC URL.  
-   - **Output**: Transaction receipts.
+## Security Considerations
 
-4. **`complete_bulk_transfer`**  
-   - **Purpose**: Execute payroll via Sonic blockchain.  
-   - **Input**: ,
-   - **Output**: Transaction receipts.
+1. **Environment Variables**  - All sensitive credentials are stored in `.env` files
 
-5. **`employee_analytics`**  
-   - **Purpose**: Analyze employee data.  
-   - **Output**: Metrics (e.g., avg salary, hours).
+- Never commit `.env` files to version control
+- Use secure methods to manage environment variables in production
 
-6. **`transaction_insights`**  
-   - **Purpose**: Deep dive into transaction logs.  
-   - **Output**: LLM-generated report.
+2. **API Security**  - All requests require proper JSON formatting
 
----
+- Input validation occurs at multiple levels
+- Error responses are sanitized to prevent information leakage
 
-## 🔒 Security & Best Practices
+3. **Web3 Security**  - Private keys are stored securely in environment variables
 
-- **Credentials**: Stored in `.env`—never commit to Git.
-- **Validation**: Multi-layer input checks prevent errors.
-- **Web3**: Private keys encrypted; gas optimized for safety.
-- **Logs**: Sanitized responses avoid data leaks.
+- Transaction signing occurs locally
+- Gas parameters are optimized for security and efficiency
 
----
+## Development Notes
 
-## 🌐 Tech Stack
+To run the development server:
 
-| Component       | Technology            |
-|-----------------|-----------------------|
-| **Server**      | Flask (Python)        |
-| **Client**      | Next  (Node.js)       |
-| **Blockchain**  | Sonic + Ethereum      |
-| **AI**          | OpenAI LLM            |
-| **Storage**     | CSV (scalable to DB)  |
-| **Social**      | Twitter/Reddit APIs   |
+```bash
+python app.py
+```
 
----
-
-## 📈 Why PayZoll Web-Agent?
-
-- **Seamless**: Sonic blockchain ensures fast, low-cost transfers.
-- **Insightful**: LLMs turn raw data into business intelligence.
-- **User-Friendly**: A React-based UI that’s sleek and intuitive.
-- **Future-Proof**: Built with the latest stacks for scalability.
-
----
-
-## 🤝 Contribute
-
-Join us in shaping the future of payroll:
-
-1. Fork the repo.
-2. Branch out (`git checkout -b feature/awesome-idea`).
-3. Commit (`git commit -m "Added brilliance"`).
-4. Push (`git push origin feature/awesome-idea`).
-5. Open a PR!
-
-Questions? Hit us up on [GitHub Discussions](https://github.com/PayZoll/Web-Agent/discussions).
-
----
-
-## 🔮 Vision
-
-PayZoll Web-Agent is more than an API—it’s a blueprint for the future of work. With seamless Web3 transactions, AI-driven insights, and a UI that delights, we’re making payroll a competitive advantage for businesses worldwide.
-
-**Star us** ⭐ | **Build with us** 🚀
+The Client is availabel at `http://web-agent-client.onrender/`
+The API will be available at `http://web-agent-server.onrender/api`
