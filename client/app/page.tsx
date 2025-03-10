@@ -9,7 +9,7 @@ const sampleQueries = [
   { title: "Chat with AI", query: "Tell me about the different features of PayZoll." },
   { title: "Post on Twitter", query: "Please post the following tweet: 'We are intoducing you to PayZoll, a new player in the Web3 Ecosystem'" },
   {
-    title: "Post on Reddit", query: "Post on the cryptocurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
+    title: "Post on Reddit", query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
   },
   { title: "Generate Post", query: "Generate a tweet about our new crypto payroll system that focuses on security features." },
   { title: "Employee Details", query: "Retrieve all employee details from the company_employees.csv file." },
@@ -30,7 +30,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const apiUrl = "https://web-agent-server.onrender.com/api";
+  // const apiUrl = "https://web-agent-server.onrender.com/api/";
+  const apiUrl = "http://127.0.0.1:5000/api";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -42,7 +42,7 @@ reddit = praw.Reddit(
     client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
     username=os.getenv("REDDIT_USERNAME"),
     password=os.getenv("REDDIT_PASSWORD"),
-    user_agent="script:WebBot:v1.0"
+    user_agent="script:Payzoll:v1.0"
 )
 
 # ----------------------
@@ -94,8 +94,20 @@ def post_on_reddit(subreddit_name, title, body):
     """
     try:
         subreddit = reddit.subreddit(subreddit_name)
-        subreddit.submit(title, selftext=body)
-        return {"status": "success", "message": "Reddit post submitted successfully!"}
+        
+        # Submit the post
+        submission = subreddit.submit(title, selftext=body)
+        
+        # Fetch available flairs and match the correct one
+        for flair in subreddit.flair.link_templates:
+            if flair['text'].lower() == flair_text.lower():
+                submission.flair.select(flair['id'])
+                break
+        else:
+            return {"status": "error", "message": f"Flair '{flair_text}' not found in subreddit '{subreddit_name}'."}
+
+        return {"status": "success", "message": "Reddit post submitted successfully with flair!"}
+    
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
@@ -213,38 +225,26 @@ def silent_bulk_transfer(rpc_url, employees_json, log_filename=None):
         
     log_csv_path = os.path.join(DATA_DIR, log_filename)
 
-    print(f"RPC URL: {rpc_url}")
-    print(f"Employees JSON: {employees_json}")
-
     try:
-        print("Connecting to Ethereum node...")
         w3 = Web3(Web3.HTTPProvider(rpc_url))
         if not w3.is_connected():
-            print("Connection failed.")
             return {"status": "error", "message": "Could not connect to Ethereum node"}
-        print("Connected to Ethereum node.")
         
         PRIVATE_KEY = os.getenv("PRIVATE_KEY")
         account = w3.eth.account.from_key(PRIVATE_KEY)
         sender_address = account.address
-        print(f"Sender address: {sender_address}")
 
         if isinstance(employees_json, str):
             employees = json.loads(employees_json)
         else:
             employees = employees_json
-        print(f"Parsed employees: {employees}")
 
         recipients = [emp["accountId"] for emp in employees]
         values = [w3.to_wei(str(emp["salary"]), "ether") for emp in employees]
-        print(f"Recipients: {recipients}")
-        print(f"Values: {values}")
 
         nonce = w3.eth.get_transaction_count(sender_address, "pending")
-        print(f"Initial nonce: {nonce}")
         receipts = []
         for i in range(len(recipients)):
-            print(f"Processing transaction {i+1}/{len(recipients)}...")
             tx = {
                 "to": recipients[i],
                 "value": values[i],
@@ -257,9 +257,7 @@ def silent_bulk_transfer(rpc_url, employees_json, log_filename=None):
             nonce += 1
             signed_tx = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
             tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
-            print(f"Transaction hash: {tx_hash.hex()}")
             receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-            print(f"Transaction receipt: {receipt}")
             receipts.append({"tx_hash": tx_hash.hex(), "status": receipt.status})
             
             # Log the transaction details locally
@@ -271,9 +269,7 @@ def silent_bulk_transfer(rpc_url, employees_json, log_filename=None):
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
             log_bulk_transfer_transaction(log_csv_path, transaction_data)
-            print(f"Logged transaction: {transaction_data}")
         
-        print("Bulk transfer completed.")
         # Return receipts directly as an array, not as a stringified JSON
         return {"status": "success", "data": receipts}
     except Exception as e:
