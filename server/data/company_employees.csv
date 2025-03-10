@@ -1,11 +1,9 @@
 id,name,email,department,position,salary,work_hours,accountId
-1,John Doe,john.doe@payzoll.com,Engineering,Senior Developer,0.8,40,0x1234567890123456789012345678901234567890
-2,Jane Smith,jane.smith@payzoll.com,Marketing,Marketing Director,0.95,38,0x2345678901234567890123456789012345678901
-3,Bob Johnson,bob.johnson@payzoll.com,Engineering,Frontend Developer,0.65,40,0x3456789012345678901234567890123456789012
-4,Alice Williams,alice.williams@payzoll.com,Finance,Financial Analyst,0.75,37,0x4567890123456789012345678901234567890123
-5,Charlie Brown,charlie.brown@payzoll.com,HR,HR Manager,0.85,39,0x5678901234567890123456789012345678901234
-6,Eva Garcia,eva.garcia@payzoll.com,Engineering,Backend Developer,0.7,40,0x6789012345678901234567890123456789012345
-7,David Lee,david.lee@payzoll.com,Sales,Sales Representative,0.6,35,0x7890123456789012345678901234567890123456
-8,Grace Kim,grace.kim@payzoll.com,Engineering,QA Engineer,0.55,40,0x8901234567890123456789012345678901234567
-9,Michael Chen,michael.chen@payzoll.com,Finance,Accountant,0.7,38,0x9012345678901234567890123456789012345678
-10,Sophie Taylor,sophie.taylor@payzoll.com,Marketing,Content Creator,0.4,36,0x0123456789012345678901234567890123456789
+1,Vaibhav Panwar,vaibhavpanwar@payzoll.com,Management,CEO,0.8,40,0x019b47b78b4b4a89228586B766cE215653831492
+2,Abhinav Pangaria,abhinavpangaria@payzoll.com,Management,COO,0.7,38,0xF947782C0CB4d3afa57912DA235894563950E2F4
+3,Siddharth Singh,siddharthsingh@payzoll.com,Marketing,Marketing Manager,0.6,40,0xa8c08D029eAa249e18fA5134837971F6DA5FCb0f
+4,Ayush Gupta,ayushgupta@payzoll.com,Engineering,AI Lead,0.5,37,0x45D9be934E92A7a95CFedf0b5f9419B6d003e7CA
+5,Sahil Saxena,sahilsaxena@payzoll.com,Engineering,Engineering Lead,0.4,39,0xc8328AEAF65722DD96f605558619c83a427eDa37
+6,Kaushal Choudhary,kaushalchoudhary@payzoll.com,Engineering,Researcher,0.3,40,0x6059E358AEB1F43d3Fdd84d8794CC7AF8B537b68
+7,Gungun Jain,gungunjain@payzoll.com,Engineering,Frontend Developer,0.2,35,0xa399b67d08f39EB36e0e3714CAFC8ed29352cAFF
+8,Aditi Ghosh,aditighosh@payzoll.com,Engineering,Frontend Developer,0.1,40,0x4a4282A93BF2ac92e4b78DcAfeF58fDE448a54B6

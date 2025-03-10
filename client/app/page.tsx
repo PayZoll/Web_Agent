@@ -7,16 +7,17 @@ import ReactMarkdown from "react-markdown";
 
 const sampleQueries = [
   { title: "Chat with AI", query: "Tell me about the different features of PayZoll." },
+  { title: "Complete Payroll", query: "Pay the complete payroll for all the employees." },
   { title: "Post on Twitter", query: "Please post the following tweet: 'We are intoducing you to PayZoll, a new player in the Web3 Ecosystem'" },
+  { title: "Transaction Insights", query: "Generate insights from our transaction log, focusing on trends in payment amounts." },
+  { title: "Generate Post", query: "Generate a tweet about our new crypto payroll system that focuses on security features." },
+  { title: "Bulk Transfer", query: "Execute a bulk transfer of ETH to these employees: [{\"accountId\": \"0xF947782C0CB4d3afa57912DA235894563950E2F4\", \"salary\": 0.2},{\"accountId\": \"0x8AA334072b03AB3F4cE4035A16a1Ee5Bde2521f1\", \"salary\": 0.2},{\"accountId\": \"0xe2e1862B5cA1743DF3F616DB927070AEC4c5B4fC\", \"salary\": 0.2}] using the Sonic RPC URL: https://rpc.blaze.soniclabs.com/" },
+  { title: "Employee Details", query: "Retrieve all employee details from the company_employees.csv file." },
+  { title: "Analytics", query: "Show me analytics for our employee data including average salary and work hours." },
   {
     title: "Post on Reddit",
     query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
   },
-  { title: "Generate Post", query: "Generate a tweet about our new crypto payroll system that focuses on security features." },
-  { title: "Employee Details", query: "Retrieve all employee details from the company_employees.csv file." },
-  { title: "Analytics", query: "Show me analytics for our employee data including average salary and work hours." },
-  { title: "Bulk Transfer", query: "Execute a bulk transfer of ETH to these employees: [{\"accountId\": \"0xF947782C0CB4d3afa57912DA235894563950E2F4\", \"salary\": 0.2},{\"accountId\": \"0x8AA334072b03AB3F4cE4035A16a1Ee5Bde2521f1\", \"salary\": 0.2},{\"accountId\": \"0xe2e1862B5cA1743DF3F616DB927070AEC4c5B4fC\", \"salary\": 0.2}] using the Sonic RPC URL: https://rpc.blaze.soniclabs.com/" },
-  { title: "Transaction Insights", query: "Generate insights from our transaction log, focusing on trends in payment amounts." },
 ];
 
 interface Message {
@@ -61,6 +62,8 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const apiUrl = "https://web-agent-server.onrender.com/api";
+  // const apiUrl = "http://127.0.0.1:5000/api";
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

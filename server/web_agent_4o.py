@@ -214,6 +214,76 @@ def log_bulk_transfer_transaction(log_csv_path, transaction_data):
     return True
 
 # ----------------------
+# Function: Complete Bulk Transfer with Logging
+# ----------------------
+def complete_bulk_transfer(log_filename=None):
+    """
+    Executes bulk transfers and logs each transaction to a local CSV file.
+    """
+
+    print("Complete Bulk Transfer")
+
+    if log_filename is None:
+        log_filename = DEFAULT_TRANSACTION_LOG
+        
+    log_csv_path = os.path.join(DATA_DIR, log_filename)
+
+    try:
+        w3 = Web3(Web3.HTTPProvider("https://rpc.blaze.soniclabs.com/"))
+        if not w3.is_connected():
+            return {"status": "error", "message": "Could not connect to Ethereum node"}
+        
+        PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+        account = w3.eth.account.from_key(PRIVATE_KEY)
+        sender_address = account.address
+
+        # Read employee data from CSV file
+        file_path = os.path.join(DATA_DIR, DEFAULT_EMPLOYEE_CSV)
+        employees = []
+        with open(file_path, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                employees.append(row)
+
+        recipients = [emp["accountId"] for emp in employees]
+        values = [w3.to_wei(str(emp["salary"]), "ether") for emp in employees]
+
+        nonce = w3.eth.get_transaction_count(sender_address, "pending")
+        receipts = []
+        for i in range(len(recipients)):
+            tx = {
+                "to": recipients[i],
+                "value": values[i],
+                "nonce": nonce,
+                "gas": 21000,
+                "maxPriorityFeePerGas": w3.to_wei("2", "gwei"),
+                "maxFeePerGas": w3.to_wei("50", "gwei"),
+                "chainId": w3.eth.chain_id
+            }
+            nonce += 1
+            signed_tx = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
+            tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+            receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+            receipts.append({"tx_hash": tx_hash.hex(), "status": receipt.status})
+            
+            # Log the transaction details locally
+            transaction_data = {
+                "tx_hash": tx_hash.hex(),
+                "status": receipt.status,
+                "recipient": recipients[i],
+                "amount": values[i],
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            log_bulk_transfer_transaction(log_csv_path, transaction_data)
+        
+        # Return receipts directly as an array, not as a stringified JSON
+        return {"status": "success", "data": receipts}
+    except Exception as e:
+        print(f"Error in bulk transfer: {e}")
+        return {"status": "error", "message": f"Error in bulk transfer: {e}"}
+
+
+# ----------------------
 # Function: Silent Bulk Transfer with Logging
 # ----------------------
 def silent_bulk_transfer(rpc_url, employees_json, log_filename=None):
@@ -385,16 +455,25 @@ def process_and_execute_message(message):
         },
         {
             "name": "silent_bulk_transfer",
-            "description": "Transfer ETH to multiple employees and log to default transaction log",
+            "description": "Transfer Sonic to multiple employees and log to default transaction log",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "rpc_url": {"type": "string", "description": "RPC URL for the Ethereum node"},
+                    "rpc_url": {"type": "string", "description": "RPC URL for the Sonic node"},
                     "employees_json": {"type": "string", "description": "JSON string of employees and salaries"}
                 },
                 "required": ["rpc_url", "employees_json"]
             }
         },
+        {
+            "name": "complete_bulk_transfer",
+            "description": "Transfer Sonic to all the employees do the complete payroll",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+            }
+        },
+        
         {
             "name": "transaction_insights",
             "description": "Get insights from the default transaction logs",
@@ -487,7 +566,8 @@ def process_and_execute_message(message):
                     function_args.get("rpc_url"),
                     function_args.get("employees_json")
                 )
-            
+            elif function_name == "complete_bulk_transfer":
+                result["function_result"] = complete_bulk_transfer()
             elif function_name == "transaction_insights":
                 result["function_result"] = transaction_insights(
                     prompt=function_args.get("prompt", "Generate insights based on the transaction data.")
