@@ -209,10 +209,11 @@ sequenceDiagram
             P-->>A: {"status": "success", "data": {...}}
         end
         
-        A-->>-P: End Processing
+        P-->>-A: End Processing
     end
     A-->>-C: Response
 ```
+    
 
 This flow showcases the API’s ability to handle diverse tasks—chat, social posts, payroll, and analytics—with a unified entry point.
 
