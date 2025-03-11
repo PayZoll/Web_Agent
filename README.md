@@ -103,21 +103,21 @@ sequenceDiagram
     participant R as Reddit API
     participant D as CSV Storage
 
-    C->>+A: POST /api {"message": "..."}
-    
+    C->>+A: POST /api {"message": "..."} 
+
     alt Invalid Request
         A-->>C: {"status": "error", "message": "Invalid input"}
     else Valid Request
-        A->>+P: Route Message
-        
+        A->>+P: Route Message 
+
         alt Chat Request
             P->>+O: "Chat with AI"
             O-->>-P: Response Text
-            P-->>A: {"status": "success", "data": "..."}
-            
+            P-->>A: {"status": "success", "data": "..."} 
         else Social Post
             P->>+O: "Generate Post"
             O-->>-P: Post Content
+
             alt Twitter
                 P->>+T: Post to Twitter
                 T-->>-P: Success
@@ -125,8 +125,8 @@ sequenceDiagram
                 P->>+R: Post to Reddit
                 R-->>-P: Success
             end
+
             P-->>A: {"status": "success", "data": "Posted"}
-            
         else Payroll Transfer
             P->>+O: "Process Payroll"
             O-->>-P: Transfer Instructions
@@ -134,17 +134,16 @@ sequenceDiagram
             S-->>-P: Transaction Hash
             P->>+D: Log Transaction
             D-->>-P: Saved
-            P-->>A: {"status": "success", "data": "Transfers complete"}
-            
+            P-->>A: {"status": "success", "data": "Transfers complete"} 
         else Analytics Request
-            GPT-->>-Processor: Function: employee_analytics
-            Processor->>+CSV: Read employee data
-            CSV-->>-Processor: Employee records
-            Processor->>+GPT: Generate insights
-            GPT-->>-Processor: Analytics report
-            Processor-->>-API: {"status": "success", ...}
-        Client-->>-API: Response
+            P->>+D: Read employee data
+            D-->>-P: Employee records
+            P->>+O: Generate insights
+            O-->>-P: Analytics report
+            P-->>A: {"status": "success", "data": "Analytics Report"}  
+        end
     end
+    A-->>C: Final Response
 ```
 
 The sequence diagram above illustrates the complete lifecycle of a request through the PayZoll API, showing how different types of requests (chat, social media posts, payroll processing, and analytics) are handled through distinct paths while maintaining a unified entry point. Each request flows through the Message Processor, which determines the appropriate function to execute based on the message content.
