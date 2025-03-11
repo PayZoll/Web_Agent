@@ -16,7 +16,7 @@ const sampleQueries = [
   { title: "Analytics", query: "Show me analytics for our employee data including average salary and work hours." },
   {
     title: "Post on Reddit",
-    query: "Post on the CryptoCurrency subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age! Our system leverages Web3 technology to ensure secure, decentralized transactions across multiple blockchains, making payroll fast and reliable. With AI-driven automation, we eliminate manual errors and streamline processes, saving you time and effort. PayZoll supports stable token swaps and efficient fiat off-ramps, so even non-Web3 users can enjoy a seamless experience akin to traditional payroll systems. Security is at our core—your assets are protected with cutting-edge encryption and smart contract precision. Plus, our automated compliance and reporting tools keep you ahead of regulations effortlessly. Whether you're a startup or an enterprise, PayZoll simplifies crypto payroll, reduces learning curves, and boosts efficiency.Check out our new system and join the future of payroll today!' "
+    query: "Post on the payzoll_test subreddit with the title 'PayZoll: The Future of Crypto Payroll' and body 'Introducing PayZoll, the ultimate crypto payroll solution designed to revolutionize how businesses handle payments in the digital age!"
   },
   { title: "Current Time", query: "What is the current server time?" },
   { title: "Motivational Quote", query: "Show me a random motivational quote." },
@@ -75,8 +75,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const apiUrl = "https://web-agent-server.onrender.com/api";
-  // const apiUrl = "http://127.0.0.1:5000/api";
+  // const apiUrl = "https://web-agent-server.onrender.com/api";
+  const apiUrl = "http://127.0.0.1:5000/api";
 
 
   const scrollToBottom = () => {

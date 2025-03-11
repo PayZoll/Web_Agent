@@ -42,7 +42,7 @@ reddit = praw.Reddit(
     client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
     username=os.getenv("REDDIT_USERNAME"),
     password=os.getenv("REDDIT_PASSWORD"),
-    user_agent="script:Payzoll:v1.0"
+    user_agent=os.getenv("REDDIT_USER_AGENT")
 )
 
 # ----------------------
@@ -119,12 +119,6 @@ def post_on_reddit(subreddit_name, title, body):
     try:
         subreddit = reddit.subreddit(subreddit_name)
         submission = subreddit.submit(title, selftext=body)
-        
-        # Optional: assign a flair if available
-        for flair in subreddit.flair.link_templates:
-            if flair['text'].lower() == "announcement":
-                submission.flair.select(flair['id'])
-                break
         return {"status": "success", "message": "Reddit post submitted successfully!"}
     
     except Exception as e:
@@ -1005,6 +999,8 @@ def process_and_execute_message(message):
         function_name = response_message["function_call"]["name"]
         function_args_str = response_message["function_call"]["arguments"]
         
+        print(f"Function called: {function_name}")
+        
         try:
             function_args = json.loads(function_args_str)
             result["function_details"] = {
@@ -1014,72 +1010,94 @@ def process_and_execute_message(message):
             
             # Original functions
             if function_name == "chat_with_ai":
+                print("Executing: chat_with_ai")
                 result["function_result"] = chat_with_ai(function_args.get("user_message", message))
             elif function_name == "post_on_twitter":
+                print("Executing: post_on_twitter")
                 result["function_result"] = post_on_twitter(function_args.get("body"))
             elif function_name == "post_on_reddit":
+                print("Executing: post_on_reddit")
                 result["function_result"] = post_on_reddit(
                     function_args.get("subreddit"),
                     function_args.get("title"),
                     function_args.get("body")
                 )
             elif function_name == "generate_post":
+                print("Executing: generate_post")
                 result["function_result"] = generate_post(
                     function_args.get("platform"),
                     function_args.get("description")
                 )
             elif function_name == "get_company_details":
+                print("Executing: get_company_details")
                 result["function_result"] = get_company_details()
             elif function_name == "employee_analytics":
+                print("Executing: employee_analytics")
                 result["function_result"] = employee_analytics()
             elif function_name == "silent_bulk_transfer":
+                print("Executing: silent_bulk_transfer")
                 result["function_result"] = silent_bulk_transfer(
                     function_args.get("rpc_url"),
                     function_args.get("employees_json")
                 )
             elif function_name == "complete_bulk_transfer":
+                print("Executing: complete_bulk_transfer")
                 result["function_result"] = complete_bulk_transfer()
             elif function_name == "transaction_insights":
+                print("Executing: transaction_insights")
                 result["function_result"] = transaction_insights(
                     prompt=function_args.get("prompt", "Generate insights based on the transaction data.")
                 )
             elif function_name == "get_current_time":
+                print("Executing: get_current_time")
                 result["function_result"] = get_current_time()
             elif function_name == "random_quote":
+                print("Executing: random_quote")
                 result["function_result"] = random_quote()
             # New PayZoll-specific functions
             elif function_name == "calculate_payroll_savings":
+                print("Executing: calculate_payroll_savings")
                 result["function_result"] = calculate_payroll_savings(
                     function_args.get("traditional_cost"),
                     function_args.get("employee_count")
                 )
             elif function_name == "get_payzoll_features":
+                print("Executing: get_payzoll_features")
                 result["function_result"] = get_payzoll_features()
             elif function_name == "get_payzoll_faq":
+                print("Executing: get_payzoll_faq")
                 result["function_result"] = get_payzoll_faq()
             elif function_name == "get_web3_payroll_guide":
+                print("Executing: get_web3_payroll_guide")
                 result["function_result"] = get_web3_payroll_guide()
             elif function_name == "compare_payroll_systems":
+                print("Executing: compare_payroll_systems")
                 result["function_result"] = compare_payroll_systems()
             elif function_name == "get_case_studies":
+                print("Executing: get_case_studies")
                 result["function_result"] = get_case_studies()
             elif function_name == "get_implementation_guide":
+                print("Executing: get_implementation_guide")
                 result["function_result"] = get_implementation_guide()
             elif function_name == "crypto_knowledge_query":
+                print("Executing: crypto_knowledge_query")
                 result["function_result"] = crypto_knowledge_query(function_args.get("query"))
             elif function_name == "generate_payroll_schedule":
+                print("Executing: generate_payroll_schedule")
                 result["function_result"] = generate_payroll_schedule(
                     function_args.get("start_date"),
                     function_args.get("frequency"),
                     function_args.get("employees_count")
                 )
             else:
+                print(f"Unknown function: {function_name}")
                 result["function_result"] = {
                     "status": "error",
                     "message": f"Unknown function: {function_name}"
                 }
                 
         except Exception as e:
+            print(f"Error executing function {function_name}: {str(e)}")
             result["function_result"] = {
                 "status": "error",
                 "message": f"Error executing function: {str(e)}"
