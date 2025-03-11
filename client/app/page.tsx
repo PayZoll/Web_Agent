@@ -75,8 +75,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // const apiUrl = "https://web-agent-server.onrender.com/api";
-  const apiUrl = "http://127.0.0.1:5000/api";
+  const apiUrl = "https://web-agent-server.onrender.com/api";
+  // const apiUrl = "http://127.0.0.1:5000/api";
 
 
   const scrollToBottom = () => {
