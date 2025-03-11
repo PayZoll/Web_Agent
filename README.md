@@ -1,4 +1,4 @@
-# PayZoll API Documentation
+# PayZoll Agent Documentation
 
 PayZoll is a revolutionary payroll platform that integrates Web3 technology with AI-driven automation. This Flask-based API simplifies crypto payroll management by handling multi-chain transactions, stable token swaps, and efficient fiat off-ramps while maintaining a user-friendly interface similar to traditional payroll systems.
 
@@ -143,9 +143,6 @@ sequenceDiagram
             Processor->>+GPT: Generate insights
             GPT-->>-Processor: Analytics report
             Processor-->>-API: {"status": "success", ...}
-            
-        end
-        
         Client-->>-API: Response
     end
 ```
