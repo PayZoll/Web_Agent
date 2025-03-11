@@ -230,7 +230,3 @@ To run the development server:
 
 ```bash
 python web_agent_4o.py
-```
-
-The Client is availabel at `http://web-agent-client.onrender/`
-The API will be available at `http://web-agent-server.onrender/api`
