@@ -229,7 +229,7 @@ All API responses follow a standardized format:
 To run the development server:
 
 ```bash
-python app.py
+python web_agent_4o.py
 ```
 
 The Client is availabel at `http://web-agent-client.onrender/`
